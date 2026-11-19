@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Pro — مساعد الذكاء الاصطناعي</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --panel: #111827;
+      --panel-2: #1a2336;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --border: #273249;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .gate-screen {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .gate-card {
+      width: 100%;
+      max-width: 430px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+    }
+
+    .gate-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 15px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      background: var(--panel-2);
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      padding: 8px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 9px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--accent);
+    }
+
+    .eye-btn {
+      position: absolute;
+      left: 8px;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 4px 6px;
+    }
+
+    .btn {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 9px 13px;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: 0.15s ease;
+      font-size: 14px;
+    }
+
+    .btn:hover {
+      border-color: var(--accent);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.45);
+      color: #fca5a5;
+    }
+
+    .error-msg {
+      color: #fca5a5;
+      font-size: 13px;
+      min-height: 18px;
+    }
+
+    .admin-gate-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 80;
+    }
+
+    .admin-gate-screen.open {
+      display: flex;
+    }
+
+    .app-shell {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .app-shell.active {
+      display: flex;
+    }
+
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .brand-badge {
+      background: rgba(59, 130, 246, 0.16);
+      color: #93c5fd;
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .app-container {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 265px 1fr;
+      height: calc(100vh - 62px);
+    }
+
+    @media (max-width: 780px) {
+      .app-container {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        display: none;
+      }
+      .sidebar.open {
+        display: flex;
+      }
+    }
+
+    .sidebar {
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .chat-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .chat-item {
+      padding: 10px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text);
+      text-align: right;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-item.active,
+    .chat-item:hover {
+      background: var(--panel-2);
+      border-color: var(--border);
+    }
+
+    .chat-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+    }
+
+    .chat-area {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .welcome-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      max-width: 700px;
+      margin: auto;
+      text-align: center;
+    }
+
+    .welcome-card h1 {
+      font-size: 23px;
+      margin-bottom: 8px;
+    }
+
+    .welcome-card p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .msg {
+      max-width: 82%;
+      padding: 12px 15px;
+      border-radius: 12px;
+      line-height: 1.65;
+      font-size: 14px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .msg.user {
+      align-self: flex-start;
+      background: var(--accent);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg.assistant {
+      align-self: flex-end;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+
+    .msg-meta {
+      font-size: 11px;
+      opacity: 0.78;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .composer {
+      background: var(--panel);
+      border-top: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .mic-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--text);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+
+    .mic-btn.listening {
+      background: rgba(239, 68, 68, 0.22);
+      border-color: var(--danger);
+      color: #fca5a5;
+    }
+
+    .composer input[type="text"] {
+      flex: 1;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 11px 14px;
+      border-radius: 10px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .composer input[type="text"]:focus {
+      border-color: var(--accent);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 60;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 580px;
+      max-height: 88vh;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .records-box {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .record-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px;
+      border-radius: 8px;
+      background: var(--panel);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    .status-text {
+      font-size: 12px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <section class="gate-screen" id="gateScreen">
+    <div class="gate-card">
+      <div class="gate-header">
+        <div class="brand-logo">AI</div>
+        <div>
+          <h1 style="font-size: 19px;">AI Pro</h1>
+          <div style="font-size: 12px; color: var(--muted);">اكتب بريدك الإلكتروني للدخول إلى AI Pro</div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button type="button" class="tab-btn active" id="tabLoginBtn">تسجيل الدخول</button>
+        <button type="button" class="tab-btn" id="tabRegisterBtn">إنشاء حساب</button>
+      </div>
+
+      <div class="field" id="nameField" style="display: none;">
+        <label for="regNameInput">الاسم</label>
+        <input type="text" id="regNameInput" placeholder="اكتب اسمك" />
+      </div>
+
+      <div class="field">
+        <label for="authEmailInput">البريد الإلكتروني</label>
+        <input type="email" id="authEmailInput" placeholder="name@example.com" required />
+      </div>
+
+      <div class="field" id="userPassField">
+        <label for="authPasswordInput">كلمة المرور</label>
+        <div class="input-wrap">
+          <input type="password" id="authPasswordInput" placeholder="اكتب كلمة المرور" />
+          <button type="button" class="eye-btn" id="toggleGatePassBtn">إظهار</button>
+        </div>
+      </div>
+
+      <div class="error-msg" id="gateErrorMsg"></div>
+
+      <button type="button" class="btn btn-primary" id="gateSubmitBtn">دخول إلى AI Pro</button>
+    </div>
+  </section>
+
+  <section class="admin-gate-screen" id="adminGateScreen">
+    <div class="gate-card">
+      <div class="gate-header">
+        <div class="brand-logo">AI</div>
+        <div>
+          <h2 style="font-size: 19px;">دخول الأدمن — AI Pro</h2>
+          <div style="font-size: 12px; color: var(--muted);" id="adminGateEmailLabel"></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="adminOnlyPassInput">اكتب باسورد الأدمن</label>
+        <div class="input-wrap">
+          <input type="password" id="adminOnlyPassInput" placeholder="اكتب باسورد الأدمن" />
+          <button type="button" class="eye-btn" id="toggleAdminGatePassBtn">إظهار</button>
+        </div>
+      </div>
+
+      <div class="error-msg" id="adminGateErrorMsg"></div>
+
+      <button type="button" class="btn btn-primary" id="adminGateSubmitBtn">تأكيد دخول الأدمن</button>
+      <button type="button" class="btn" id="backToLoginBtn">رجوع</button>
+    </div>
+  </section>
+
+  <div class="app-shell" id="appShell">
+    <header>
+      <div class="brand">
+        <div class="brand-logo">AI</div>
+        <span class="brand-title">AI Pro</span>
+        <span class="brand-badge">AI Pro Studio</span>
+      </div>
+
+      <div class="header-actions">
+        <button type="button" class="btn" id="toggleSidebarBtn">المحادثات</button>
+        <button type="button" class="btn" id="newChatBtn">+ محادثة جديدة</button>
+        <button type="button" class="btn" id="exportChatBtn">تصدير .txt</button>
+        <button type="button" class="btn" id="adminSettingsBtn" style="display: none;">إعدادات AI Pro (أدمن)</button>
+        <button type="button" class="btn btn-danger" id="logoutBtn">خروج</button>
+      </div>
+    </header>
+
+    <div class="app-container">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <span>محادثات AI Pro</span>
+          <span id="roleBadge">مستخدم</span>
+        </div>
+        <div class="chat-list" id="chatList"></div>
+      </aside>
+
+      <main class="chat-area">
+        <div class="messages" id="messages">
+          <div class="welcome-card" id="welcomeCard">
+            <h1>أهلاً بك في AI Pro</h1>
+            <p>
+              مساعد ذكاء اصطناعي متكامل داخل <strong>AI Pro</strong>.
+              اكتب رسالتك أو اضغط على زر الميكروفون للتحدث مباشرة.
+            </p>
+          </div>
+        </div>
+
+        <form class="composer" id="composerForm">
+          <button type="button" class="mic-btn" id="micBtn" title="تحدث بالصوت">🎤</button>
+          <input
+            type="text"
+            id="promptInput"
+            placeholder="اكتب رسالتك أو اضغط الميكروفون للتحدث مع AI Pro..."
+            autocomplete="off"
+            required
+          />
+          <button type="submit" class="btn btn-primary" id="sendBtn">إرسال</button>
+        </form>
+      </main>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="adminModalBackdrop">
+    <div class="modal">
+      <h2>إعدادات AI Pro — لوحة الأدمن فقط</h2>
+
+      <div class="field">
+        <label for="adminEmailConfigInput">بريد الأدمن الرئيسي</label>
+        <input type="email" id="adminEmailConfigInput" />
+      </div>
+
+      <div class="field">
+        <label for="adminPassConfigInput">كلمة مرور حساب الأدمن</label>
+        <div class="input-wrap">
+          <input type="password" id="adminPassConfigInput" />
+          <button type="button" class="eye-btn" id="toggleAdminPassBtn">إظهار</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="groqKeyInput">مفتاح Groq API (L)</label>
+        <div class="input-wrap">
+          <input type="password" id="groqKeyInput" placeholder="gsk_..." />
+          <button type="button" class="eye-btn" id="toggleKeyBtn">إظهار</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="groqModelInput">نموذج الذكاء الاصطناعي</label>
+        <input type="text" id="groqModelInput" value="llama-3.1-8b-instant" />
+      </div>
+
+      <div class="field">
+        <label>الحسابات المسجلة — الإيميل وكلمة المرور وبيانات الجهاز (أدمن فقط)</label>
+        <div class="records-box" id="adminRecordsBox"></div>
+      </div>
+
+      <div class="status-text" id="adminStatusMsg"></div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" id="clearChatsBtn">مسح المحادثات</button>
+        <button type="button" class="btn" id="closeAdminModalBtn">إغلاق</button>
+        <button type="button" class="btn btn-primary" id="saveAdminSettingsBtn">حفظ إعدادات AI Pro</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const BRAND_NAME = "AI Pro";
+    const DEFAULT_ADMIN_EMAIL = "loaykalefa032@gmail.com";
+    const DEFAULT_ADMIN_PASS = "L1O2A3Y4";
+
+    const L = "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";
+    const DEFAULT_MODEL = "llama-3.1-8b-instant";
+
+    const KEYS = {
+      config: "ai_pro_secure_config_v9",
+      users: "ai_pro_users_v9",
+      logs: "ai_pro_device_logs_v9",
+      session: "ai_pro_session_v9",
+      chats: "ai_pro_chats_v9",
+      activeChat: "ai_pro_active_chat_v9"
+    };
+
+    function getDeviceSnapshot() {
+      const ua = navigator.userAgent || "غير معروف";
+      let platform = "جهاز غير محدد";
+      if (/Windows/i.test(ua)) platform = "Windows PC";
+      else if (/Android/i.test(ua)) platform = "Android";
+      else if (/iPhone|iPad|iPod/i.test(ua)) platform = "iOS / Apple";
+      else if (/Mac/i.test(ua)) platform = "macOS";
+
+      const screenRes = `${window.screen?.width || 0}x${window.screen?.height || 0}`;
+      const lang = navigator.language || "ar";
+      return `${platform} | الشاشة: ${screenRes} | اللغة: ${lang}`;
+    }
+
+    function resolveActiveKey(savedKey) {
+      if (L && L.trim()) {
+        return L.trim();
+      }
+      if (savedKey && savedKey.trim()) {
+        return savedKey.trim();
+      }
+      return "";
+    }
+
+    function sanitizeModel(modelName) {
+      const clean = (modelName || "").trim();
+      if (!clean || clean === "llama-3.3-70b-versatile") {
+        return DEFAULT_MODEL;
+      }
+      return clean;
+    }
+
+    function loadInitialData() {
+      const savedConfig = JSON.parse(localStorage.getItem(KEYS.config) || "null");
+      const config = Object.assign(
+        {
+          adminEmail: DEFAULT_ADMIN_EMAIL,
+          adminPassword: DEFAULT_ADMIN_PASS,
+          apiKey: resolveActiveKey(""),
+          model: DEFAULT_MODEL
+        },
+        savedConfig || {}
+      );
+
+      config.apiKey = resolveActiveKey(config.apiKey);
+      config.model = sanitizeModel(config.model);
+
+      let users = JSON.parse(localStorage.getItem(KEYS.users) || "null");
+      if (!Array.isArray(users) || users.length === 0) {
+        users = [
+          {
+            name: "Loay Admin",
+            email: config.adminEmail,
+            password: config.adminPassword,
+            role: "admin",
+            device: getDeviceSnapshot()
+          }
+        ];
+      }
+
+      const logs = JSON.parse(localStorage.getItem(KEYS.logs) || "[]");
+      const session = JSON.parse(localStorage.getItem(KEYS.session) || "null");
+      const chats = JSON.parse(localStorage.getItem(KEYS.chats) || "[]");
+      const activeChatId = localStorage.getItem(KEYS.activeChat) || null;
+
+      return { config, users, logs, session, chats, activeChatId };
+    }
+
+    let state = loadInitialData();
+    let authMode = "login";
+    let pendingAdminEmail = null;
+
+    function persistAll() {
+      localStorage.setItem(KEYS.config, JSON.stringify(state.config));
+      localStorage.setItem(KEYS.users, JSON.stringify(state.users));
+      localStorage.setItem(KEYS.logs, JSON.stringify(state.logs));
+      if (state.session) {
+        localStorage.setItem(KEYS.session, JSON.stringify(state.session));
+      } else {
+        localStorage.removeItem(KEYS.session);
+      }
+      localStorage.setItem(KEYS.chats, JSON.stringify(state.chats));
+      if (state.activeChatId) {
+        localStorage.setItem(KEYS.activeChat, state.activeChatId);
+      }
+    }
+
+    function recordLoginActivity({ name, email, password, action }) {
+      state.logs.unshift({
+        time: new Date().toLocaleString("ar-EG"),
+        action,
+        name: name || "مستخدم",
+        email,
+        password,
+        device: getDeviceSnapshot()
+      });
+      if (state.logs.length > 50) {
+        state.logs = state.logs.slice(0, 50);
+      }
+    }
+
+    function isCurrentUserAdmin() {
+      if (!state.session || !state.session.email) return false;
+      return state.session.email.toLowerCase() === (state.config.adminEmail || "").toLowerCase();
+    }
+
+    const gateScreen = document.getElementById("gateScreen");
+    const adminGateScreen = document.getElementById("adminGateScreen");
+    const adminGateEmailLabel = document.getElementById("adminGateEmailLabel");
+    const adminOnlyPassInput = document.getElementById("adminOnlyPassInput");
+    const adminGateErrorMsg = document.getElementById("adminGateErrorMsg");
+    const appShell = document.getElementById("appShell");
+    const tabLoginBtn = document.getElementById("tabLoginBtn");
+    const tabRegisterBtn = document.getElementById("tabRegisterBtn");
+    const nameField = document.getElementById("nameField");
+    const regNameInput = document.getElementById("regNameInput");
+    const authEmailInput = document.getElementById("authEmailInput");
+    const authPasswordInput = document.getElementById("authPasswordInput");
+    const gateErrorMsg = document.getElementById("gateErrorMsg");
+    const gateSubmitBtn = document.getElementById("gateSubmitBtn");
+
+    function setAuthMode(mode) {
+      authMode = mode;
+      gateErrorMsg.textContent = "";
+      if (mode === "login") {
+        tabLoginBtn.classList.add("active");
+        tabRegisterBtn.classList.remove("active");
+        nameField.style.display = "none";
+        gateSubmitBtn.textContent = "دخول إلى AI Pro";
+      } else {
+        tabRegisterBtn.classList.add("active");
+        tabLoginBtn.classList.remove("active");
+        nameField.style.display = "flex";
+        gateSubmitBtn.textContent = "إنشاء حساب والدخول إلى AI Pro";
+      }
+    }
+
+    tabLoginBtn.addEventListener("click", () => setAuthMode("login"));
+    tabRegisterBtn.addEventListener("click", () => setAuthMode("register"));
+
+    function bindPasswordToggle(btnId, inputId) {
+      document.getElementById(btnId).addEventListener("click", (e) => {
+        const inp = document.getElementById(inputId);
+        const isPass = inp.type === "password";
+        inp.type = isPass ? "text" : "password";
+        e.target.textContent = isPass ? "إخفاء" : "إظهار";
+      });
+    }
+
+    bindPasswordToggle("toggleGatePassBtn", "authPasswordInput");
+    bindPasswordToggle("toggleAdminGatePassBtn", "adminOnlyPassInput");
+    bindPasswordToggle("toggleAdminPassBtn", "adminPassConfigInput");
+    bindPasswordToggle("toggleKeyBtn", "groqKeyInput");
+
+    function openAdminPasswordScreen(email) {
+      pendingAdminEmail = email;
+      gateErrorMsg.textContent = "";
+      adminGateErrorMsg.textContent = "";
+      adminOnlyPassInput.value = "";
+      adminGateEmailLabel.textContent = `الحساب: ${email}`;
+      gateScreen.style.display = "none";
+      adminGateScreen.classList.add("open");
+      adminOnlyPassInput.focus();
+    }
+
+    document.getElementById("backToLoginBtn").addEventListener("click", () => {
+      pendingAdminEmail = null;
+      adminGateErrorMsg.textContent = "";
+      adminOnlyPassInput.value = "";
+      adminGateScreen.classList.remove("open");
+      gateScreen.style.display = "flex";
+    });
+
+    document.getElementById("adminGateSubmitBtn").addEventListener("click", () => {
+      const pass = adminOnlyPassInput.value;
+      if (!pass) {
+        adminGateErrorMsg.textContent = "اكتب باسورد الأدمن أولاً.";
+        return;
+      }
+
+      if (pass !== state.config.adminPassword) {
+        adminGateErrorMsg.textContent = "باسورد الأدمن غير صحيح.";
+        return;
+      }
+
+      const adminEmail = pendingAdminEmail || state.config.adminEmail || DEFAULT_ADMIN_EMAIL;
+      state.session = {
+        name: "Loay Admin",
+        email: adminEmail,
+        role: "admin"
+      };
+      recordLoginActivity({
+        name: "Loay Admin",
+        email: adminEmail,
+        password: pass,
+        action: "دخول أدمن"
+      });
+      persistAll();
+      pendingAdminEmail = null;
+      adminGateScreen.classList.remove("open");
+      syncView();
+    });
+
+    gateSubmitBtn.addEventListener("click", () => {
+      const email = authEmailInput.value.trim().toLowerCase();
+      const password = authPasswordInput.value;
+      const name = regNameInput.value.trim();
+
+      if (!email || !email.includes("@")) {
+        gateErrorMsg.textContent = "لا يمكنك الدخول إلا بعد كتابة بريد إلكتروني صحيح.";
+        return;
+      }
+
+      const adminEmailLower = (state.config.adminEmail || "").toLowerCase();
+
+      if (email === adminEmailLower) {
+        openAdminPasswordScreen(state.config.adminEmail);
+        return;
+      }
+
+      if (!password) {
+        gateErrorMsg.textContent = "يرجى إدخال كلمة المرور.";
+        return;
+      }
+
+      if (authMode === "login") {
+        const matchedUser = state.users.find(
+          (u) => u.email.toLowerCase() === email && u.password === password
+        );
+
+        if (!matchedUser) {
+          gateErrorMsg.textContent = "البريد الإلكتروني أو كلمة المرور غير صحيحة.";
+          return;
+        }
+
+        matchedUser.device = getDeviceSnapshot();
+        state.session = {
+          name: matchedUser.name || "مستخدم",
+          email: matchedUser.email,
+          role: "user"
+        };
+        recordLoginActivity({
+          name: matchedUser.name,
+          email: matchedUser.email,
+          password: matchedUser.password,
+          action: "تسجيل دخول"
+        });
+        persistAll();
+        syncView();
+      } else {
+        if (!name) {
+          gateErrorMsg.textContent = "يرجى كتابة الاسم لإنشاء الحساب.";
+          return;
+        }
+        const exists = state.users.some((u) => u.email.toLowerCase() === email);
+        if (exists) {
+          gateErrorMsg.textContent = "هذا البريد مسجل مسبقًا، اختر تسجيل الدخول.";
+          return;
+        }
+
+        const newUser = {
+          name,
+          email,
+          password,
+          role: "user",
+          device: getDeviceSnapshot()
+        };
+        state.users.push(newUser);
+        state.session = { name, email, role: "user" };
+        recordLoginActivity({
+          name,
+          email,
+          password,
+          action: "إنشاء حساب جديد"
+        });
+        persistAll();
+        syncView();
+      }
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      state.session = null;
+      persistAll();
+      authPasswordInput.value = "";
+      syncView();
+    });
+
+    function syncView() {
+      const loggedIn = Boolean(state.session && state.session.email);
+      if (!loggedIn) {
+        appShell.classList.remove("active");
+        document.getElementById("adminModalBackdrop").classList.remove("open");
+        if (!pendingAdminEmail) {
+          adminGateScreen.classList.remove("open");
+          gateScreen.style.display = "flex";
+        }
+        return;
+      }
+
+      gateScreen.style.display = "none";
+      adminGateScreen.classList.remove("open");
+      appShell.classList.add("active");
+
+      const admin = isCurrentUserAdmin();
+      document.getElementById("adminSettingsBtn").style.display = admin ? "inline-block" : "none";
+      document.getElementById("roleBadge").textContent = admin
+        ? `${BRAND_NAME} Admin`
+        : state.session.name || "مستخدم";
+
+      renderChatList();
+      renderMessages();
+    }
+
+    const messagesEl = document.getElementById("messages");
+    const welcomeCardEl = document.getElementById("welcomeCard");
+    const chatListEl = document.getElementById("chatList");
+    const composerForm = document.getElementById("composerForm");
+    const promptInput = document.getElementById("promptInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const micBtn = document.getElementById("micBtn");
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function getActiveChat() {
+      return state.chats.find((c) => c.id === state.activeChatId) || null;
+    }
+
+    function ensureActiveChat(titleText = `محادثة ${BRAND_NAME}`) {
+      let chat = getActiveChat();
+      if (!chat) {
+        chat = {
+          id: "chat_" + Date.now(),
+          title: titleText.slice(0, 32),
+          messages: []
+        };
+        state.chats.unshift(chat);
+        state.activeChatId = chat.id;
+        persistAll();
+      }
+      return chat;
+    }
+
+    function renderChatList() {
+      chatListEl.innerHTML = "";
+      if (!state.chats.length) {
+        chatListEl.innerHTML = `<div class="status-text">لا توجد محادثات بعد في ${BRAND_NAME}.</div>`;
+        return;
+      }
+
+      state.chats.forEach((chat) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "chat-item" + (chat.id === state.activeChatId ? " active" : "");
+        btn.innerHTML = `<span class="chat-title">${escapeHtml(chat.title)}</span>`;
+        btn.addEventListener("click", () => {
+          state.activeChatId = chat.id;
+          persistAll();
+          renderChatList();
+          renderMessages();
+        });
+        chatListEl.appendChild(btn);
+      });
+    }
+
+    function renderMessages() {
+      const chat = getActiveChat();
+      messagesEl.innerHTML = "";
+
+      if (!chat || !chat.messages.length) {
+        messagesEl.appendChild(welcomeCardEl);
+        welcomeCardEl.style.display = "block";
+        return;
+      }
+
+      chat.messages.forEach((m) => {
+        const div = document.createElement("div");
+        div.className = `msg ${m.role}`;
+        const sender = m.role === "user" ? (state.session?.name || "أنت") : BRAND_NAME;
+        div.innerHTML = `<div class="msg-meta">${escapeHtml(sender)}</div><div>${escapeHtml(m.content)}</div>`;
+        messagesEl.appendChild(div);
+      });
+
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    async function fetchAvailableGroqModel(apiKey) {
+      const res = await fetch("https://api.groq.com/openai/v1/models", {
+        headers: {
+          "Authorization": `Bearer ${apiKey}`
+        }
+      });
+      if (!res.ok) return DEFAULT_MODEL;
+      const data = await res.json();
+      const ids = (data.data || []).map((m) => m.id).filter(Boolean);
+      const preferred = [
+        "llama-3.1-8b-instant",
+        "llama-3.3-70b-versatile",
+        "gemma2-9b-it",
+        "mixtral-8x7b-32768"
+      ];
+      for (const p of preferred) {
+        if (ids.includes(p)) return p;
+      }
+      return ids[0] || DEFAULT_MODEL;
+    }
+
+    async function sendChatCompletion(apiKey, modelName, history) {
+      return await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: modelName,
+          messages: [
+            {
+              role: "system",
+              content: `أنت مساعد ذكاء اصطناعي داخل منصة ${BRAND_NAME}. أجب بوضوح وبدقة.`
+            },
+            ...history.map((m) => ({ role: m.role, content: m.content }))
+          ],
+          temperature: 0.7
+        })
+      });
+    }
+
+    async function callGroqAPI(history) {
+      const apiKey = resolveActiveKey(state.config.apiKey);
+      if (!apiKey) {
+        return `مرحبًا بك في ${BRAND_NAME}. يرجى من الأدمن ضبط مفتاح Groq API من لوحة إعدادات AI Pro.`;
+      }
+
+      let modelToUse = sanitizeModel(state.config.model);
+      let response = await sendChatCompletion(apiKey, modelToUse, history);
+
+      if (response.status === 404) {
+        const fallbackModel = await fetchAvailableGroqModel(apiKey);
+        if (fallbackModel && fallbackModel !== modelToUse) {
+          modelToUse = fallbackModel;
+          state.config.model = fallbackModel;
+          persistAll();
+          response = await sendChatCompletion(apiKey, modelToUse, history);
+        }
+      }
+
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Groq Error ${response.status}: ${errText}`);
+      }
+
+      const data = await response.json();
+      return data.choices?.[0]?.message?.content || "لم يتم استلام رد نصي.";
+    }
+
+    composerForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!state.session) return;
+
+      const text = promptInput.value.trim();
+      if (!text) return;
+
+      const chat = ensureActiveChat(text);
+      if (chat.messages.length === 0) {
+        chat.title = text.slice(0, 32);
+      }
+
+      chat.messages.push({ role: "user", content: text });
+      promptInput.value = "";
+      persistAll();
+      renderChatList();
+      renderMessages();
+
+      sendBtn.disabled = true;
+      sendBtn.textContent = "...";
+
+      try {
+        const reply = await callGroqAPI(chat.messages);
+        chat.messages.push({ role: "assistant", content: reply });
+      } catch (err) {
+        chat.messages.push({
+          role: "assistant",
+          content: `تعذر إتمام الطلب في ${BRAND_NAME}: ${err.message}`
+        });
+      } finally {
+        sendBtn.disabled = false;
+        sendBtn.textContent = "إرسال";
+        persistAll();
+        renderMessages();
+      }
+    });
+
+    const SpeechRecognitionClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    let isListening = false;
+
+    if (SpeechRecognitionClass) {
+      recognition = new SpeechRecognitionClass();
+      recognition.lang = "ar-SA";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => {
+        isListening = true;
+        micBtn.classList.add("listening");
+        promptInput.placeholder = "جارٍ الاستماع إليك الآن... تحدث مع AI Pro";
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results?.[0]?.[0]?.transcript || "";
+        if (transcript) {
+          promptInput.value = promptInput.value
+            ? `${promptInput.value} ${transcript}`
+            : transcript;
+          promptInput.focus();
+        }
+      };
+
+      recognition.onerror = (event) => {
+        promptInput.placeholder = `تعذر استخدام الميكروفون (${event.error || "خطأ"}) — يمكنك الكتابة يدويًا`;
+      };
+
+      recognition.onend = () => {
+        isListening = false;
+        micBtn.classList.remove("listening");
+        if (!promptInput.placeholder.includes("تعذر")) {
+          promptInput.placeholder = "اكتب رسالتك أو اضغط الميكروفون للتحدث مع AI Pro...";
+        }
+      };
+    }
+
+    micBtn.addEventListener("click", () => {
+      if (!SpeechRecognitionClass || !recognition) {
+        alert("متصفحك الحالي لا يدعم التعرف الصوتي المباشر؛ جرّب متصفح Chrome أو Edge.");
+        return;
+      }
+      if (isListening) {
+        recognition.stop();
+      } else {
+        try {
+          recognition.start();
+        } catch (err) {
+          recognition.stop();
+        }
+      }
+    });
+
+    document.getElementById("newChatBtn").addEventListener("click", () => {
+      const chat = {
+        id: "chat_" + Date.now(),
+        title: `محادثة ${BRAND_NAME}`,
+        messages: []
+      };
+      state.chats.unshift(chat);
+      state.activeChatId = chat.id;
+      persistAll();
+      renderChatList();
+      renderMessages();
+    });
+
+    document.getElementById("exportChatBtn").addEventListener("click", () => {
+      const chat = getActiveChat();
+      if (!chat || !chat.messages.length) return;
+      const lines = chat.messages.map(
+        (m) => `[${m.role === "user" ? (state.session?.name || "User") : BRAND_NAME}] ${m.content}`
+      );
+      const blob = new Blob([lines.join("\n\n")], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${chat.title || "AI-Pro-Chat"}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    document.getElementById("toggleSidebarBtn").addEventListener("click", () => {
+      document.getElementById("sidebar").classList.toggle("open");
+    });
+
+    const adminModalBackdrop = document.getElementById("adminModalBackdrop");
+    const adminRecordsBox = document.getElementById("adminRecordsBox");
+    const adminStatusMsg = document.getElementById("adminStatusMsg");
+
+    function renderAdminRecords() {
+      adminRecordsBox.innerHTML = "";
+      if (!state.users.length && !state.logs.length) {
+        adminRecordsBox.innerHTML = `<div class="status-text">لا توجد حسابات مسجلة بعد.</div>`;
+        return;
+      }
+
+      state.users.forEach((u) => {
+        const row = document.createElement("div");
+        row.className = "record-row";
+        row.innerHTML = `
+          <div><strong>الاسم:</strong> ${escapeHtml(u.name || "مستخدم")} | <strong>الدور:</strong> ${escapeHtml(u.role || "user")}</div>
+          <div><strong>الإيميل:</strong> ${escapeHtml(u.email || "")}</div>
+          <div><strong>الباسورد:</strong> <strong>${escapeHtml(u.password || "")}</strong></div>
+          <div style="color: var(--muted);"><strong>الجهاز:</strong> ${escapeHtml(u.device || getDeviceSnapshot())}</div>
+        `;
+        adminRecordsBox.appendChild(row);
+      });
+    }
+
+    document.getElementById("adminSettingsBtn").addEventListener("click", () => {
+      if (!isCurrentUserAdmin()) {
+        alert("هذه الإعدادات متاحة للأدمن فقط.");
+        return;
+      }
+      document.getElementById("adminEmailConfigInput").value = state.config.adminEmail || DEFAULT_ADMIN_EMAIL;
+      document.getElementById("adminPassConfigInput").value = state.config.adminPassword || DEFAULT_ADMIN_PASS;
+      document.getElementById("groqKeyInput").value = state.config.apiKey || "";
+      document.getElementById("groqModelInput").value = state.config.model || DEFAULT_MODEL;
+      adminStatusMsg.textContent = "";
+      renderAdminRecords();
+      adminModalBackdrop.classList.add("open");
+    });
+
+    document.getElementById("closeAdminModalBtn").addEventListener("click", () => {
+      adminModalBackdrop.classList.remove("open");
+    });
+
+    document.getElementById("saveAdminSettingsBtn").addEventListener("click", () => {
+      if (!isCurrentUserAdmin()) return;
+
+      const newAdminEmail = document.getElementById("adminEmailConfigInput").value.trim() || DEFAULT_ADMIN_EMAIL;
+      const newAdminPass = document.getElementById("adminPassConfigInput").value || DEFAULT_ADMIN_PASS;
+      const newApiKey = document.getElementById("groqKeyInput").value.trim();
+      const newModel = document.getElementById("groqModelInput").value.trim() || DEFAULT_MODEL;
+
+      state.config.adminEmail = newAdminEmail;
+      state.config.adminPassword = newAdminPass;
+      state.config.apiKey = newApiKey;
+      state.config.model = newModel;
+
+      const adminIdx = state.users.findIndex(
+        (u) => u.email.toLowerCase() === newAdminEmail.toLowerCase() || u.role === "admin"
+      );
+      if (adminIdx >= 0) {
+        state.users[adminIdx].email = newAdminEmail;
+        state.users[adminIdx].password = newAdminPass;
+        state.users[adminIdx].role = "admin";
+      } else {
+        state.users.unshift({
+          name: "Loay Admin",
+          email: newAdminEmail,
+          password: newAdminPass,
+          role: "admin",
+          device: getDeviceSnapshot()
+        });
+      }
+
+      if (state.session && state.session.role === "admin") {
+        state.session.email = newAdminEmail;
+      }
+
+      persistAll();
+      renderAdminRecords();
+      adminStatusMsg.textContent = `تم حفظ إعدادات ${BRAND_NAME} للأدمن بنجاح.`;
+    });
+
+    document.getElementById("clearChatsBtn").addEventListener("click", () => {
+      if (!isCurrentUserAdmin()) return;
+      state.chats = [];
+      state.activeChatId = null;
+      persistAll();
+      renderChatList();
+      renderMessages();
+      adminStatusMsg.textContent = "تم مسح سجل المحادثات.";
+    });
+
+    syncView();
+  </script>
+</body>
+</html>
